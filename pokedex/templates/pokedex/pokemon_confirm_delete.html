@@ -1,0 +1,18 @@
+{% extends 'pokedex/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h1 class="h4 text-danger">Eliminar Pokémon</h1>
+            <p>¿Seguro que deseas eliminar a <strong>{{ pokemon.name }}</strong>?</p>
+
+            <form method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+            </form>
+            <a href="{% url 'pokedex:pokemon_list' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
