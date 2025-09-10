@@ -20,30 +20,36 @@
                 alt="{{ pokemon.name }}" style="width:96px; height:96px;">
           <div class="card-body">
             <h5 class="card-title text-capitalize">{{ pokemon.name }}</h5>
-            <a href="{% url 'pokedex:pokemon_detail' p.id %}" class="btn btn-primary btn-sm">🔍 Ver Detalles</a>
+            <a href="{% url 'pokedex:pokemon_detail' pokemon.name %}" class="btn btn-primary btn-sm">🔍 Ver Detalles</a>
           </div>
         </div>
       </div>
     {% endfor %}
   </div>
 
-  <!-- Paginación -->
-  <nav aria-label="Paginación" class="mt-4">
-    <ul class="pagination justify-content-center">
-      <li class="page-item {% if page <= 1 %}disabled{% endif %}">
-        <a class="page-link" href="?page={{ page|add:-1 }}">Anterior</a>
-      </li>
+<!-- Paginación -->
+<nav aria-label="Paginación" class="mt-4">
+  <ul class="pagination justify-content-center">
+    <!-- Botón Anterior -->
+    <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+      <a class="page-link" href="?page={{ page|add:-1 }}">Anterior</a>
+    </li>
 
-      {% for pagenum in pages %}
+    <!-- Mostrar la página actual y las siguientes dos páginas -->
+    {% for pagenum in pages %}
+      {% if pagenum >= page and pagenum < page|add:3 %}
         <li class="page-item {% if pagenum == page %}active{% endif %}">
           <a class="page-link" href="?page={{ pagenum }}">{{ pagenum }}</a>
         </li>
-      {% endfor %}
+      {% endif %}
+    {% endfor %}
 
-      <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
-        <a class="page-link" href="?page={{ page|add:1 }}">Siguiente</a>
-      </li>
-    </ul>
-  </nav>
+    <!-- Botón Siguiente -->
+    <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+      <a class="page-link" href="?page={{ page|add:1 }}">Siguiente</a>
+    </li>
+  </ul>
+</nav>
+
 </div>
 {% endblock %}

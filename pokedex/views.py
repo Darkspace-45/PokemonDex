@@ -12,7 +12,43 @@ PAGE_SIZE = 20
 # ---------------------------
 
 def index(request):
-    return render(request, 'pokedex/index.html')
+    try:
+        page = int(request.GET.get('page', '1'))
+        if page < 1:
+            page = 1
+    except ValueError:
+        page = 1
+
+    offset = (page - 1) * PAGE_SIZE
+    url = f"{POKEAPI_BASE}/pokemon?limit={PAGE_SIZE}&offset={offset}"
+
+    resp = requests.get(url, timeout=10)
+    if resp.status_code != 200:
+        return render(request, 'pokedex/index.html', {'error': 'No se pudo obtener la lista de pokemones.'})
+
+    data = resp.json()
+    results = data.get('results', [])
+    total = data.get('count', 0)
+    total_pages = math.ceil(total / PAGE_SIZE)
+
+    pokemons = []
+    for r in results:
+        name = r['name']
+        pokemon_id = r['url'].rstrip('/').split('/')[-1]
+        image = f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{pokemon_id}.png"
+        pokemons.append({'name': name, 'id': pokemon_id, 'image': image})
+
+    pages = range(1, total_pages + 1)
+
+    context = {
+        'pokemons': pokemons,
+        'page': page,
+        'total_pages': total_pages,
+        'pages': pages,
+        'page_size': PAGE_SIZE,
+    }
+    return render(request, 'pokedex/index.html', context)
+
 
 def pokemon_list(request):
     try:
